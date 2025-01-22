@@ -11,7 +11,7 @@ import {
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useAuth } from "@/context/auth"; // Importar el contexto de autenticación
 
-export function Navbar({ brandName, routes, action }) {
+export function Navbar({ brandName, routes }) {
   const [openNav, setOpenNav] = React.useState(false);
   const { isAuthenticated, logout } = useAuth(); // Obtener el estado de autenticación y logout
 
@@ -114,9 +114,16 @@ export function Navbar({ brandName, routes, action }) {
               pro version
             </Button>
           </a>
-          {isAuthenticated && React.cloneElement(action, {
-            className: "w-full block",
-          })}
+          {isAuthenticated && (
+            <Button
+              variant="gradient"
+              size="sm"
+              fullWidth
+              onClick={logout} // Llamar a logout al hacer clic
+            >
+              Log out
+            </Button>
+          )}
         </div>
       </MobileNav>
     </MTNavbar>
@@ -124,23 +131,12 @@ export function Navbar({ brandName, routes, action }) {
 }
 
 Navbar.defaultProps = {
-  brandName: "Material Tailwind React",
-  action: (
-    <a
-      href="https://www.creative-tim.com/product/material-tailwind-kit-react"
-      target="_blank"
-    >
-      <Button variant="gradient" size="sm" fullWidth>
-        Log out
-      </Button>
-    </a>
-  ),
+  brandName: "La5",
 };
 
 Navbar.propTypes = {
   brandName: PropTypes.string,
   routes: PropTypes.arrayOf(PropTypes.object).isRequired,
-  action: PropTypes.node,
 };
 
 Navbar.displayName = "/src/widgets/layout/navbar.jsx";

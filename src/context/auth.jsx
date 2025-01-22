@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'; // Agregar useContext
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export const AuthContext = createContext();
 
@@ -21,31 +21,33 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    const userId = localStorage.getItem('userId');
-    const token = localStorage.getItem('token');
     try {
-      const response = await fetch(import.meta.env.VITE_API_LOGOUT, {
+      const userId = localStorage.getItem('userId');
+      const token = localStorage.getItem('token');
+  
+      const response = await fetch(`${import.meta.env.VITE_API_LOGOUT}/${userId}/${token}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'accept': 'application/json',
+          'Accept': 'application/json',
         },
-        body: JSON.stringify({ email: userId, token }),
+        body: ''
       });
-      const data = await response.json();
-      if (response.ok) {
-        console.log(data.message); // "bye bye"
-        localStorage.clear();
-        setIsAuthenticated(false);
-      } else {
-        setIsAuthenticated(false);
-        localStorage.clear();
+  
+      if (!response.ok) {
+        throw new Error(`Logout failed: ${response.statusText}`);
       }
+  
+      const { message } = await response.json();
+      console.log(message || "Logout successful");
+  
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error:', error.message);
+    } finally {
+      localStorage.clear();
+      setIsAuthenticated(false);
     }
   };
-
+  
   return (
     <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, login, logout }}>
       {children}
@@ -53,4 +55,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext); // Exportar useAuth
+export const useAuth = () => useContext(AuthContext);
