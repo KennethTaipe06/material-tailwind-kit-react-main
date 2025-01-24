@@ -36,7 +36,7 @@ export function PasswordRecovery() {
         });
         const data = await response.json();
         if (response.ok) {
-          localStorage.setItem("userId", data.userId); // Almacenar el userId en el localStorage
+          localStorage.setItem("email", data.email); // Almacenar el email en el localStorage
           //setAlertMessage("Please enter the 4-digit code.");
           setAlertType("success");
           setShowCodeInput(true); // Mostrar el campo de código
@@ -53,15 +53,15 @@ export function PasswordRecovery() {
       // Aquí puedes manejar la verificación del código de 4 dígitos y la nueva contraseña
       if (code.length === 4 && validatePassword(password) && password === repeatPassword) {
         try {
-          const userId = localStorage.getItem("userId");
+          const email = localStorage.getItem("email");
           const response = await fetch(import.meta.env.VITE_API_RESET_PASSWORD, {
-            method: "PATCH",
+            method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId, resetCode: code, newPassword: password }),
+            body: JSON.stringify({ mail: email, resetCode: code, newPassword: password }),
           });
           const data = await response.json();
           if (response.ok) {
-            setAlertMessage("Password updated successfully");
+            setAlertMessage(data.message || "Password updated successfully");
             setAlertType("success");
             setTimeout(() => navigate("/sign-in"), 2000); // Redirigir a la página de inicio de sesión
           } else {
